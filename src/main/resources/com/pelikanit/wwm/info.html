@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width" />
+	<link rel=”apple-touch-icon” href=”/apple-touch-icon.png”/>
+	<link rel=”apple-touch-icon-precomposed” href=”/apple-touch-icon.png”/>
+	<style>
+	
+		* {
+			font-family: Arial;
+			font-weight: bold;
+		}
+		
+		#wwtank {
+			position: absolute;
+			top: 10px;
+			left: 10px;
+			border: 3px solid black;
+			border-radius: 75px/22px;
+			width: 150px;
+			height: 250px;
+			background: lightgrey;
+			line-height: 180px;
+			text-align: center;
+			color: black;
+			font-size: 30px;
+		}
+		
+		#wwtank #text {
+			display: inline-block;
+			vertical-align: middle;
+			line-height: normal;
+		}
+		
+		#topMarker {
+			position: absolute;
+			top: 22px;
+			left: 165px;
+			white-space: nowrap;
+		}
+
+		#middleMarker {
+			position: absolute;
+			top: 145px;
+			left: 165px;
+			white-space: nowrap;
+		}
+
+		#bottomMarker {
+			position: absolute;
+			top: 228px;
+			left: 165px;
+			white-space: nowrap;
+		}
+		
+		#bath {
+			position: absolute;
+			left: 12px;
+			top: 300px;
+			line-height: 90px;
+			text-align: center;
+			color: black;
+			font-size: 30px;
+		}
+		
+		#bath #bathCanvas {
+			position: absolute;
+		}
+		
+		body {
+			background-color: lightgrey;
+		}
+		
+		#wrapper {
+			width: 230px;
+			display: block;
+			margin-left: auto;
+			margin-right: auto;
+		}
+	</style>
+	
+	<script language="JavaScript"><!--
+	
+		function buildCssForResponse(response) {
+		
+			return 'linear-gradient('
+					+ response.topSensorColor
+					+ ', '
+					+ response.topSensorColor
+					+ ' 5%, '
+					+ response.middleSensorColor
+					+ ' 50%,'
+					+ response.bottomSensorColor
+					+ ' 95%, '
+					+ response.bottomSensorColor
+					+ ')';
+			
+		}
+		
+		function getDescriptionHtml(response) {
+		
+			// 270 Liter zu 38°
+			return response.bathWaterInLitre
+					+ ' Liter zu '
+					+ response.bathWaterTemperature
+					+ '°';
+		
+		}
+		
+		function getMarkerHtml(value) {
+			
+			return '- '
+					+ value
+					+ '°';
+			
+		}
+		
+		function refreshDisplayByAjaxResponse(response) {
+		
+			var wwtank = document.getElementById('wwtank');
+			var background = buildCssForResponse(response);
+			wwtank.style.background = background;
+			
+			var wwtankText = document.getElementById('text');
+			var descHtml = getDescriptionHtml(response);
+			wwtankText.innerHTML = descHtml;
+			
+			var topMarker = document.getElementById('topMarker');
+			var markerHtml = getMarkerHtml(response.topSensorValue);
+			topMarker.innerHTML = markerHtml;
+			
+			var middleMarker = document.getElementById('middleMarker');
+			markerHtml = getMarkerHtml(response.middleSensorValue);
+			middleMarker.innerHTML = markerHtml;
+
+			var bottomMarker = document.getElementById('bottomMarker');
+			markerHtml = getMarkerHtml(response.bottomSensorValue);
+			bottomMarker.innerHTML = markerHtml;
+
+			window.setTimeout('refreshDisplay();', 60000);
+		}
+	
+		function processAjaxResponse() {
+		
+			if (this.readyState == 4) {
+				if (this.status == 200) {
+					var obj = JSON.parse(this.responseText);
+					refreshDisplayByAjaxResponse(obj);
+					drawBath(obj.numberOfBathesPossible);
+				}
+			}		
+			
+		}
+		
+		function refreshDisplay() {
+		
+			var ajax = null;
+			if (window.XMLHttpRequest) { //Google Chrome, Mozilla Firefox, Opera, Safari, IE 10
+				ajax = new XMLHttpRequest();
+			}
+			else if (window.ActiveXObject){ // Internet Explorer 9 und niedriger
+				try {
+					ajax = new ActiveXObject("Msxml2.XMLHTTP.6.0");
+				} catch(e) {
+					try {
+						ajax = new ActiveXObject("Msxml2.XMLHTTP.3.0");
+					}
+					catch(e) {}
+				}
+			}
+			if (ajax == null) {
+				alert("Mit diesem Browser ist keine Aktualisierung möglich!");
+				return;
+			}
+				
+			ajax.open("GET", "/rest/wwm/status", true);
+			ajax.onreadystatechange = processAjaxResponse;
+			ajax.send();
+		
+		}
+		
+		function drawBath(factor) {
+		
+			var c = document.getElementById("bathCanvas");
+			var ctx = c.getContext("2d");
+			ctx.beginPath();
+			ctx.moveTo(3, 2);
+			ctx.lineTo(12, 2);
+			ctx.quadraticCurveTo(15, 6, 18, 9);
+			ctx.lineTo(30, 60);
+			ctx.quadraticCurveTo(33, 63, 36, 66);
+			ctx.lineTo(114, 66);
+			ctx.quadraticCurveTo(117, 63, 120, 60);
+			ctx.lineTo(132, 9);
+			ctx.quadraticCurveTo(135, 6, 139, 2);
+			ctx.lineTo(147, 2);
+			ctx.lineWidth = 3;
+			ctx.strokeStyle = "black";
+			ctx.lineJoin = 'round';
+			ctx.fillStyle = "rgb(150, 150, 255)";
+			ctx.fill();
+			ctx.stroke();
+			ctx.fillStyle = "black";
+			ctx.textAlign = 'center';
+			ctx.font = "bold 20px Arial";
+			var text = factor + ' x';
+			ctx.fillText(text, 75, 40);
+			
+		}
+				
+	//--></script>
+</head>
+
+<body onLoad="refreshDisplay();">
+
+<div id="wrapper">
+<div style="position: absolute;">
+
+<div id="wwtank">
+	<span id="text"></span>
+</div>
+<div id="topMarker"></div>
+<div id="middleMarker"></div>
+<div id="bottomMarker"></div>
+
+<div id="bath">
+	<canvas id="bathCanvas" width="150" height="120"></canvas>
+	<div>
+</div>
+
+</div>
+</div>
+
+</body>
+
+</html>

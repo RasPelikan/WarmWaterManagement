@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<style>
+	
+		* {
+			font-family: Arial;
+			font-weight: bold;
+		}
+		
+		#wwtank {
+			position: absolute;
+			top: 10px;
+			left: 10px;
+			border: 3px solid black;
+			border-radius: 50px/15px;
+			width: 100px;
+			height: 170px;
+			background: linear-gradient(rgb(255, 127, 0), rgb(255, 127, 0) 5%, rgb(255, 200, 0) 20%, rgb(255, 185, 130) 40%, blue);
+			line-height: 120px;
+			text-align: center;
+			color: black;
+			font-size: 20px;
+		}
+		
+		#wwtank #text {
+			display: inline-block;
+			vertical-align: middle;
+			line-height: normal;
+		}
+		
+		#topMarker {
+			position: absolute;
+			top: 15px;
+			left: 115px;
+			white-space: nowrap;
+		}
+
+		#middleMarker {
+			position: absolute;
+			top: 55px;
+			left: 115px;
+			white-space: nowrap;
+		}
+
+		#bottomMarker {
+			position: absolute;
+			top: 90px;
+			left: 115px;
+			white-space: nowrap;
+		}
+		
+		#bath {
+			position: absolute;
+			left: 12px;
+			top: 200px;
+			line-height: 60px;
+			text-align: center;
+			color: black;
+			font-size: 20px;
+		}
+		
+		#bath #bathCanvas {
+			position: absolute;
+		}
+		
+		body {
+			background-color: lightgrey;
+		}
+		
+		#wrapper {
+			width: 170px;
+			display: block;
+			margin-left: auto;
+			margin-right: auto;
+		}
+	</style>
+</head>
+
+<body>
+
+<div id="wrapper">
+<div style="position: absolute;">
+
+<div id="wwtank">
+	<span id="text">
+		270 Liter bei 38°
+	</span>
+</div>
+<div id="topMarker">- 45,3°</div>
+<div id="middleMarker">- 43°</div>
+<div id="bottomMarker">- 37,2°</div>
+
+<div id="bath">
+	<canvas id="bathCanvas" width="100" height="80"></canvas>
+	<script>
+		function drawBath() {
+			var c = document.getElementById("bathCanvas");
+			var ctx = c.getContext("2d");
+			ctx.beginPath();
+			ctx.moveTo(2, 2);
+			ctx.lineTo(8, 2);
+			ctx.quadraticCurveTo(10, 4, 12, 6);
+			ctx.lineTo(20,40);
+			ctx.quadraticCurveTo(22, 42, 24, 44);
+			ctx.lineTo(76,44);
+			ctx.quadraticCurveTo(78, 42, 80, 40);
+			ctx.lineTo(88,6);
+			ctx.quadraticCurveTo(90, 4, 92, 2);
+			ctx.lineTo(98,2);
+			ctx.lineWidth = 3;
+			ctx.strokeStyle = "black";
+			ctx.lineJoin = 'round';
+			ctx.fillStyle = "rgb(150, 150, 255)";
+			ctx.fill();
+			ctx.stroke();
+			ctx.fillStyle = "black";
+			ctx.textAlign = 'center';
+			ctx.font = "bold 20px Arial";
+			ctx.fillText('1,8x', 50, 30);
+		}
+		drawBath();
+	</script>
+</div>
+
+</div>
+</div>
+
+</body>
+
+</html>
